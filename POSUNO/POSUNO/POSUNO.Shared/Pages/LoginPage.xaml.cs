@@ -1,4 +1,5 @@
 ﻿using POSUNO.Helpers;
+using POSUNO.Models;
 using System;
 using System.Threading.Tasks;
 using Windows.UI.Popups;
@@ -9,14 +10,11 @@ using Windows.UI.Xaml.Controls;
 
 namespace POSUNO.Pages
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class LoginPage : Page
     {
         public LoginPage()
         {
-            this.InitializeComponent();
+           InitializeComponent();
         }
 
         private async void LoginButton_Click(object sender, RoutedEventArgs e)
@@ -26,7 +24,30 @@ namespace POSUNO.Pages
             {
                 return;
             }
-            MessageDialog messageDialog = new MessageDialog("Vamos bien", "Ok");
+            Response response = await ApiService.LoginAsync(new LoginRequest
+            {
+                Email = EmailTextBox.Text,
+                Password = PasswordPasswordBox.Password
+
+            });
+
+            MessageDialog messageDialog;
+            if (response.IsSuccess)
+            {
+                messageDialog = new MessageDialog(response.Message, "Error");
+                await messageDialog.ShowAsync();
+                return;
+            }
+
+            User user = (User)response.Result;
+            if(user == null)
+            {
+                messageDialog = new MessageDialog("Usuario contraseña incorrectos", "Error");
+                await messageDialog.ShowAsync();
+                return;
+            }
+
+           messageDialog = new MessageDialog($"Bienvenido: {user.FullName}", "Ok");
             await messageDialog.ShowAsync();
         }
 

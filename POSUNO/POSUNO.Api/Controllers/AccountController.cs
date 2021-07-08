@@ -73,8 +73,9 @@ namespace POSUNO.Api.Controllers
             return NoContent();
         }
 
+        
         [HttpPost]
-        [Route("login")]
+        [Route("Login")]
         public async Task<ActionResult<User>> Login(LoginRequest model)
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.Email == model.Email && u.Password == model.Password);
