@@ -1,4 +1,5 @@
-﻿using POSUNO.Helpers;
+﻿using POSUNO.Components;
+using POSUNO.Helpers;
 using POSUNO.Models;
 using System;
 using System.Threading.Tasks;
@@ -24,12 +25,16 @@ namespace POSUNO.Pages
             {
                 return;
             }
+
+            Loader loader = new Loader("Por favor espere...");
+            loader.Show();
             Response response = await ApiService.LoginAsync(new LoginRequest
             {
                 Email = EmailTextBox.Text,
                 Password = PasswordPasswordBox.Password
 
             });
+            loader.Close();
 
             MessageDialog messageDialog;
             if (response.IsSuccess)
@@ -47,8 +52,7 @@ namespace POSUNO.Pages
                 return;
             }
 
-           messageDialog = new MessageDialog($"Bienvenido: {user.FullName}", "Ok");
-            await messageDialog.ShowAsync();
+            Frame.Navigate(typeof(MainPage), user);
         }
 
         private async Task<bool> ValidForm()
