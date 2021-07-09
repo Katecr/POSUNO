@@ -13,7 +13,8 @@ namespace POSUNO.Pages
         public LoginPage()
         {
             InitializeComponent();
-            
+            EmailTextBox.Text = "katecr17@gmail.com";
+            PasswordPasswordBox.Password = "123456";
         }
 
         private async void LoginButton_Click(object sender, RoutedEventArgs e)
