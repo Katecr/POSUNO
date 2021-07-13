@@ -4,6 +4,8 @@ using System;
 using System.Text;
 using System.Net.Http;
 using System.Threading.Tasks;
+using NUnit.Framework;
+using System.Collections.Generic;
 
 namespace POSUNO.Helpers
 {
@@ -55,5 +57,50 @@ namespace POSUNO.Helpers
                 };
             }
         }
+    
+        public static async Task<Response> GetListAsync<T>(string controller)
+        {
+            try
+            {
+                //Manages the communications
+                HttpClientHandler handler = new HttpClientHandler()
+                {
+                    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+                };
+                string url = Settings.GetApiUrl();
+                HttpClient client = new HttpClient(handler)
+                {
+                    BaseAddress = new Uri(url)
+                };
+
+                HttpResponseMessage response = await client.GetAsync($"api/{controller}");
+                string result = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return new Response
+                    {
+                        IsSuccess = false,
+                        Message = result,
+                    };
+                }
+
+                List<T> list= JsonConvert.DeserializeObject<List<T>>(result);
+                return new Response
+                {
+                    IsSuccess = true,
+                    Result = list,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new Response
+                {
+                    IsSuccess = false,
+                    Message = ex.Message
+                };
+            }
+        }
+    
     }
 }

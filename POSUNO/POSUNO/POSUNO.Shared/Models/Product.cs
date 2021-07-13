@@ -13,7 +13,11 @@
     
         public decimal Price { get; set; }
 
+        public string PriceString => $"{Price:C2}";
+
         public float Stock { get; set; }
+
+        public string StockString => $"{Stock:N2}";
 
         public bool IsActive { get; set; }
 
